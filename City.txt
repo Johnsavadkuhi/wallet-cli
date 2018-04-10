@@ -375,3 +375,7 @@
 35.197.34.68|||"country":"United States","city":"Mountain View","longitude":-122.0574,"latitude":37.419200000000004
 92.192.243.124|||"country":"Germany","city":"Germany","longitude":9.491,"latitude":51.2993
 82.253.45.57|||"country":"France","city":"Paris","longitude":2.3487999999999998,"latitude":48.8534
+80.211.191.38|||"country":"Italy","city":"Arezzo","longitude":11.8833,"latitude":43.4167
+35.169.113.187|||"country":"United States","city":"Ashburn","longitude":-77.6452,"latitude":39.0853
+37.187.124.30|||"country":"France","city":"France","longitude":2.3387000000000002,"latitude":48.8582
+47.254.18.49|||"country":"United States","city":"San Mateo","longitude":-122.3558,"latitude":37.526
