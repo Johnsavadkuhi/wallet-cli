@@ -197,7 +197,7 @@ public class Test {
   public static void testGenKey() {
     ECKey eCkey = null;
     List<String> hexPriKeyList = new ArrayList<String>();
-    hexPriKeyList.add("D95611A9AF2A2A45359106222ED1AFED48853D9A44DEFF8DC7913F5CBA727366");ß
+    hexPriKeyList.add("D95611A9AF2A2A45359106222ED1AFED48853D9A44DEFF8DC7913F5CBA727366");
     for (String priKeyHex : hexPriKeyList) {
 
       try {
