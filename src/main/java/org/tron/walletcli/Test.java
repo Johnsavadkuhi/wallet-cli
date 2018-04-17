@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.InetAddress;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
@@ -195,40 +196,42 @@ public class Test {
 
   public static void testGenKey() {
     ECKey eCkey = null;
-    String priKeyHex = "cba92a516ea09f620a16ff7ee95ce0df1d56550a8babe9964981a7144c8a784a";
-    try {
-      BigInteger priK = new BigInteger(priKeyHex, 16);
-      eCkey = ECKey.fromPrivate(priK);
-    } catch (Exception ex) {
-      ex.printStackTrace();
-      return;
+    List<String> hexPriKeyList = new ArrayList<String>();
+    hexPriKeyList.add("D95611A9AF2A2A45359106222ED1AFED48853D9A44DEFF8DC7913F5CBA727366");ß
+    for (String priKeyHex : hexPriKeyList) {
+
+      try {
+        BigInteger priK = new BigInteger(priKeyHex, 16);
+        eCkey = ECKey.fromPrivate(priK);
+      } catch (Exception ex) {
+        ex.printStackTrace();
+        return;
+      }
+
+      byte[] password = Base64.getEncoder().encode(ByteArray.fromHexString(priKeyHex));
+      byte[] pubKey = eCkey.getPubKey();
+      byte[] sha3 = Hash.sha3(Arrays.copyOfRange(pubKey, 1, pubKey.length));
+      byte[] address = eCkey.getAddress();
+      byte[] sha256_0 = Hash.sha256(address);
+      byte[] sha256_1 = Hash.sha256(sha256_0);
+      byte[] checkSum = Arrays.copyOfRange(sha256_1, 0, 4);
+      byte[] addchecksum = new byte[address.length + 4];
+      System.arraycopy(address, 0, addchecksum, 0, address.length);
+      System.arraycopy(checkSum, 0, addchecksum, address.length, 4);
+      String base58 = Base58.encode(addchecksum);
+      String base58Address = WalletClient.encode58Check(address);
+
+      System.out.println("Private Key: " + priKeyHex);
+      System.out.println("Password = base64(Private Key): " + new String(password, Charset.forName("UTF-8")));
+      System.out.println("Public Key: " + ByteArray.toHexString(pubKey));
+      System.out.println("sha3 = SHA3(Public Key[1, 65)): " + ByteArray.toHexString(sha3));
+      System.out.println("address = a0||sha3[12,32): " + ByteArray.toHexString(address));
+      System.out.println("sha256_0 = sha256(address): " + ByteArray.toHexString(sha256_0));
+      System.out.println("sha256_1 = sha256(sha256_0): " + ByteArray.toHexString(sha256_1));
+      System.out.println("checkSum = sha256_1[0, 4): " + ByteArray.toHexString(checkSum));
+      System.out.println("addchecksum = address || checkSum: " + ByteArray.toHexString(addchecksum));
+      System.out.println("base58Address = Base58(addchecksum): " + base58Address);
     }
-
-    byte[] pubKey = eCkey.getPubKey();
-    byte[] hash = Hash.sha3(Arrays.copyOfRange(pubKey, 1, pubKey.length));
-    byte[] hash_ = Hash.sha3(pubKey);
-    byte[] address = eCkey.getAddress();
-    byte[] hash0 = Hash.sha256(address);
-    byte[] hash1 = Hash.sha256(hash0);
-    byte[] checkSum = Arrays.copyOfRange(hash1, 0, 4);
-    byte[] addchecksum = new byte[address.length + 4];
-    System.arraycopy(address, 0, addchecksum, 0, address.length);
-    System.arraycopy(checkSum, 0, addchecksum, address.length, 4);
-    String base58 = Base58.encode(addchecksum);
-    String base58Address = WalletClient.encode58Check(address);
-
-    String pubKeyString = ByteArray.toHexString(pubKey);
-    System.out.println("priKeyHex:::" + priKeyHex);
-    System.out.println("pubKeyString:::" + pubKeyString);
-    System.out.println("hash:::" + ByteArray.toHexString(hash));
-    System.out.println("hash_:::" + ByteArray.toHexString(hash_));
-    System.out.println("address:::" + ByteArray.toHexString(address));
-    System.out.println("hash0:::" + ByteArray.toHexString(hash0));
-    System.out.println("hash1:::" + ByteArray.toHexString(hash1));
-    System.out.println("checkSum:::" + ByteArray.toHexString(checkSum));
-    System.out.println("addchecksum:::" + ByteArray.toHexString(addchecksum));
-    System.out.println("base58:::" + base58);
-    System.out.println("base58Address:::" + base58Address);
   }
 
   public static void testSignEx() {
@@ -326,6 +329,6 @@ public static void testSha3(){
 }
   public static void main(String[] args) throws Exception {
 
-    testSha3();
+    testGenKey();
   }
 }
